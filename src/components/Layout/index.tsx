@@ -5,13 +5,18 @@ import { Header } from "../Header";
 
 export const Layout: React.FC = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);
 	};
 
+	const toggleMinimize = () => {
+		setIsSidebarMinimized(!isSidebarMinimized);
+	};
+
 	return (
-		<div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+		<div className="flex h-screen bg-neutral-100 dark:bg-neutral-900">
 			{/* Mobile sidebar backdrop */}
 			{isSidebarOpen && (
 				<div
@@ -22,17 +27,20 @@ export const Layout: React.FC = () => {
 
 			{/* Sidebar */}
 			<div
-				className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+				className={`fixed inset-y-0 left-0 z-30 transform lg:relative lg:translate-x-0 transition-all duration-300 ${
 					isSidebarOpen ? "translate-x-0" : "-translate-x-full"
 				}`}
 			>
-				<Sidebar onClose={() => setIsSidebarOpen(false)} />
+				<Sidebar
+					isMinimized={isSidebarMinimized}
+					onToggleMinimize={toggleMinimize}
+				/>
 			</div>
 
 			{/* Main content */}
 			<div className="flex flex-1 flex-col overflow-hidden">
 				<Header onMenuClick={toggleSidebar} />
-				<main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-4">
+				<main className="flex-1 overflow-x-hidden overflow-y-auto bg-neutral-100 dark:bg-neutral-900 p-4">
 					<Outlet />
 				</main>
 			</div>

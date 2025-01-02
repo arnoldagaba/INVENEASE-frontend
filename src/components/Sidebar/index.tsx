@@ -24,21 +24,27 @@ const navigation = [
 	{ name: "Settings", href: "/settings", icon: Settings },
 ];
 
-export const Sidebar = () => {
-	const [isMinimized, setIsMinimized] = useState(false);
+interface SidebarProps {
+	isMinimized: boolean;
+	onToggleMinimize: () => void;
+}
 
+export const Sidebar: React.FC<SidebarProps> = ({
+	isMinimized,
+	onToggleMinimize,
+}) => {
 	return (
 		<div
 			className={cn(
-				"flex flex-col h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-all duration-300",
-				isMinimized ? "w-[4rem]" : "w-64"
+				"h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-all duration-300",
+				isMinimized ? "w-16" : "w-64"
 			)}
 		>
 			<div className="flex items-center justify-between h-16 px-4 border-b border-neutral-200 dark:border-neutral-800">
 				<h1
 					className={cn(
 						"font-semibold text-xl text-neutral-900 dark:text-neutral-100 transition-opacity duration-300",
-						isMinimized && "opacity-0"
+						isMinimized && "opacity-0 hidden"
 					)}
 				>
 					InvenEase
@@ -46,8 +52,8 @@ export const Sidebar = () => {
 				<Button
 					variant="ghost"
 					size="sm"
-					onClick={() => setIsMinimized(!isMinimized)}
-					className="ml-auto"
+					onClick={onToggleMinimize}
+					className={cn("", !isMinimized && "ml-auto")}
 				>
 					{isMinimized ? (
 						<ChevronRight className="h-5 w-5" />
@@ -70,12 +76,13 @@ export const Sidebar = () => {
 								isMinimized && "justify-center"
 							)
 						}
+						title={item.name}
 					>
 						<item.icon className="h-5 w-5 flex-shrink-0" />
 						<span
 							className={cn(
 								"ml-3 transition-opacity duration-300",
-								isMinimized && "hidden"
+								isMinimized && "hidden opacity-0"
 							)}
 						>
 							{item.name}
