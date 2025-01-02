@@ -1,34 +1,37 @@
 export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: 'admin' | 'staff';
-}
-
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  sku: string;
-  category: string;
-  price: number;
-  quantity: number;
-  lowStockThreshold: number;
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	name: string;
+	email: string;
+	role: "admin" | "staff";
 }
 
 export interface Category {
-  id: string;
-  name: string;
-  description: string;
+	id: string;
+	name: string;
+	description?: string;
+	productCount: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export interface Product {
+	id: string;
+	name: string;
+	description?: string;
+	sku: string;
+	category: Category;
+	price: number;
+	quantity: number;
+	lowStockThreshold: number;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface Transaction {
-  id: string;
-  productId: string;
-  type: 'stock-in' | 'stock-out';
-  quantity: number;
-  date: string;
-  userId: string;
+	id: string;
+	type: "sale" | "restock";
+	productId: string;
+	quantity: number;
+	price: number;
+	date: string;
 }

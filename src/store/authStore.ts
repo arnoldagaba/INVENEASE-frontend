@@ -16,7 +16,7 @@ const loadInitialState = () => {
 		const storedToken = localStorage.getItem("token");
 		return {
 			user: storedUser ? JSON.parse(storedUser) : null,
-			token: storedToken,
+			token: storedToken || null,
 			isAuthenticated: !!storedToken && !!storedUser,
 		};
 	} catch (error) {

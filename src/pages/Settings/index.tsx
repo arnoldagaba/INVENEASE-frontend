@@ -1,145 +1,211 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
-import { Button } from "../../components/ui/Button";
 import { useAuthStore } from "../../store/authStore";
 import { authService } from "../../services/auth";
+import { Button } from "../../components/ui/Button";
+import { toast } from "react-toastify";
+import { Mail, User, Building2, Lock, Save } from "lucide-react";
 
 export const Settings: React.FC = () => {
-	const [currentPassword, setCurrentPassword] = useState("");
-	const [newPassword, setNewPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
+	const { user, updateUser } = useAuthStore();
 	const [isLoading, setIsLoading] = useState(false);
-	const user = useAuthStore((state) => state.user);
+	const [formData, setFormData] = useState({
+		name: user?.name || "",
+		email: user?.email || "",
+		companyName: user?.companyName || "",
+		currentPassword: "",
+		newPassword: "",
+		confirmPassword: "",
+	});
 
-	const handlePasswordChange = async (e: React.FormEvent) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({ ...prev, [name]: value }));
+	};
+
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
-		if (newPassword !== confirmPassword) {
-			toast.error("New passwords do not match");
-			return;
-		}
-
-		if (newPassword.length < 6) {
-			toast.error("New password must be at least 6 characters long");
-			return;
-		}
-
 		setIsLoading(true);
 
 		try {
-			await authService.updatePassword(currentPassword, newPassword);
-			toast.success("Password updated successfully");
-			setCurrentPassword("");
-			setNewPassword("");
-			setConfirmPassword("");
+			if (formData.newPassword) {
+				if (formData.newPassword !== formData.confirmPassword) {
+					toast.error("New passwords don't match");
+					return;
+				}
+
+				await authService.updatePassword({
+					currentPassword: formData.currentPassword,
+					newPassword: formData.newPassword,
+				});
+				toast.success("Password updated successfully");
+			}
+
+			// Reset password fields
+			setFormData((prev) => ({
+				...prev,
+				currentPassword: "",
+				newPassword: "",
+				confirmPassword: "",
+			}));
 		} catch (error) {
-			toast.error("Failed to update password");
+			console.error("Error updating settings:", error);
+			toast.error("Failed to update settings");
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
 	return (
-		<div className="max-w-4xl mx-auto py-6 space-y-8">
+		<div className="max-w-4xl mx-auto space-y-6">
 			<div>
-				<h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+				<h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
 					Settings
-				</h2>
-				<p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+				</h1>
+				<p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
 					Manage your account settings and preferences
 				</p>
 			</div>
 
-			<div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-				<h3 className="text-lg font-medium text-gray-900 dark:text-white">
-					Account Information
-				</h3>
-				<div className="mt-4 space-y-4">
-					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-							Name
-						</label>
-						<p className="mt-1 text-sm text-gray-900 dark:text-white">
-							{user?.name}
-						</p>
-					</div>
-					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-							Email
-						</label>
-						<p className="mt-1 text-sm text-gray-900 dark:text-white">
-							{user?.email}
-						</p>
-					</div>
-					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-							Role
-						</label>
-						<p className="mt-1 text-sm text-gray-900 dark:text-white capitalize">
-							{user?.role}
-						</p>
-					</div>
-				</div>
-			</div>
+			<div className="bg-white dark:bg-neutral-800 shadow-sm rounded-lg border border-neutral-200 dark:border-neutral-700">
+				<form
+					onSubmit={handleSubmit}
+					className="divide-y divide-neutral-200 dark:divide-neutral-700"
+				>
+					{/* Profile Section */}
+					<div className="p-6 space-y-6">
+						<h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+							Profile Information
+						</h2>
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div>
+								<label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+									Name
+								</label>
+								<div className="mt-1 relative rounded-md shadow-sm">
+									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<User className="h-5 w-5 text-neutral-400" />
+									</div>
+									<input
+										type="text"
+										name="name"
+										value={formData.name}
+										onChange={handleChange}
+										className="block w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+										placeholder="Your name"
+									/>
+								</div>
+							</div>
 
-			<div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-				<h3 className="text-lg font-medium text-gray-900 dark:text-white">
-					Change Password
-				</h3>
-				<form onSubmit={handlePasswordChange} className="mt-4 space-y-4">
-					<div>
-						<label
-							htmlFor="currentPassword"
-							className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-						>
-							Current Password
-						</label>
-						<input
-							id="currentPassword"
-							type="password"
-							value={currentPassword}
-							onChange={(e) => setCurrentPassword(e.target.value)}
-							required
-							className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
-						/>
+							<div>
+								<label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+									Email
+								</label>
+								<div className="mt-1 relative rounded-md shadow-sm">
+									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<Mail className="h-5 w-5 text-neutral-400" />
+									</div>
+									<input
+										type="email"
+										name="email"
+										value={formData.email}
+										onChange={handleChange}
+										className="block w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+										placeholder="your.email@example.com"
+									/>
+								</div>
+							</div>
+
+							<div className="sm:col-span-2">
+								<label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+									Company Name
+								</label>
+								<div className="mt-1 relative rounded-md shadow-sm">
+									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<Building2 className="h-5 w-5 text-neutral-400" />
+									</div>
+									<input
+										type="text"
+										name="companyName"
+										value={formData.companyName}
+										onChange={handleChange}
+										className="block w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+										placeholder="Your company name"
+									/>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div>
-						<label
-							htmlFor="newPassword"
-							className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-						>
-							New Password
-						</label>
-						<input
-							id="newPassword"
-							type="password"
-							value={newPassword}
-							onChange={(e) => setNewPassword(e.target.value)}
-							required
-							minLength={6}
-							className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
-						/>
+
+					{/* Password Section */}
+					<div className="p-6 space-y-6">
+						<h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+							Change Password
+						</h2>
+						<div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+							<div className="sm:col-span-2">
+								<label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+									Current Password
+								</label>
+								<div className="mt-1 relative rounded-md shadow-sm">
+									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<Lock className="h-5 w-5 text-neutral-400" />
+									</div>
+									<input
+										type="password"
+										name="currentPassword"
+										value={formData.currentPassword}
+										onChange={handleChange}
+										className="block w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+										placeholder="Enter current password"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+									New Password
+								</label>
+								<div className="mt-1 relative rounded-md shadow-sm">
+									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<Lock className="h-5 w-5 text-neutral-400" />
+									</div>
+									<input
+										type="password"
+										name="newPassword"
+										value={formData.newPassword}
+										onChange={handleChange}
+										className="block w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+										placeholder="Enter new password"
+									/>
+								</div>
+							</div>
+
+							<div>
+								<label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+									Confirm New Password
+								</label>
+								<div className="mt-1 relative rounded-md shadow-sm">
+									<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+										<Lock className="h-5 w-5 text-neutral-400" />
+									</div>
+									<input
+										type="password"
+										name="confirmPassword"
+										value={formData.confirmPassword}
+										onChange={handleChange}
+										className="block w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+										placeholder="Confirm new password"
+									/>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div>
-						<label
-							htmlFor="confirmPassword"
-							className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-						>
-							Confirm New Password
-						</label>
-						<input
-							id="confirmPassword"
-							type="password"
-							value={confirmPassword}
-							onChange={(e) => setConfirmPassword(e.target.value)}
-							required
-							minLength={6}
-							className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm dark:bg-gray-700 dark:text-white"
-						/>
-					</div>
-					<div>
-						<Button type="submit" className="w-full" isLoading={isLoading}>
-							Update Password
+
+					{/* Form Actions */}
+					<div className="px-6 py-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-b-lg flex justify-end">
+						<Button type="submit" disabled={isLoading} className="gap-2">
+							<Save className="h-4 w-4" />
+							{isLoading ? "Saving..." : "Save Changes"}
 						</Button>
 					</div>
 				</form>

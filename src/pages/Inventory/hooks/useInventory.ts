@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { productsApi } from "../../../services/api";
+import { productsApi } from "../../../services";
 
 interface Product {
 	id: string;

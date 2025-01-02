@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { productsApi, transactionsApi } from "../../../services/api";
+import { productsApi, transactionsApi } from "../../../services";
 
 interface DashboardData {
 	totalProducts: number;

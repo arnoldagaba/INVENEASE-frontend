@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
-import { transactionsApi } from "../../services/api";
+import { transactionsApi } from "../../services";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import { formatCurrency } from "../../utils/format";
@@ -119,8 +119,8 @@ export const Transactions: React.FC = () => {
 
 	const fetchTransactions = async () => {
 		try {
-			const response = await transactionsApi.getAll();
-			setTransactions(response.data);
+			const { data } = await transactionsApi.getAll();
+			setTransactions(data);
 			setIsLoading(false);
 		} catch (error) {
 			console.error("Error fetching transactions:", error);

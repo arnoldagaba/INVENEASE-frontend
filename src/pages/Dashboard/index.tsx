@@ -6,11 +6,7 @@ import {
 	Tags,
 	AlertTriangle,
 } from "lucide-react";
-import {
-	productsApi,
-	categoriesApi,
-	transactionsApi,
-} from "../../services/api";
+import { productsApi, categoriesApi, transactionsApi } from "../../services";
 import { toast } from "react-toastify";
 import { formatCurrency } from "../../utils/format";
 
@@ -33,23 +29,27 @@ export const Dashboard: React.FC = () => {
 	useEffect(() => {
 		const fetchDashboardData = async () => {
 			try {
-				const [products, categories, transactions] = await Promise.all([
+				const [
+					{ data: products },
+					{ data: categories },
+					{ data: transactions },
+				] = await Promise.all([
 					productsApi.getAll(),
 					categoriesApi.getAll(),
 					transactionsApi.getAll(),
 				]);
 
-				const lowStockCount = products.data.filter(
+				const lowStockCount = products.filter(
 					(product: any) => product.quantity <= product.lowStockThreshold
 				).length;
 
-				const totalSales = transactions.data
-					.filter((t: any) => t.type === "sale")
+				const totalSales = transactions
+					.filter((t: any) => t.type === "stock-out")
 					.reduce((sum: number, t: any) => sum + t.price * t.quantity, 0);
 
 				setStats({
-					totalProducts: products.data.length,
-					totalCategories: categories.data.length,
+					totalProducts: products.length,
+					totalCategories: categories.length,
 					totalSales,
 					lowStockProducts: lowStockCount,
 				});

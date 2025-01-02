@@ -1,12 +1,51 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+	darkMode: ["class"],
 	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-	darkMode: "class",
 	theme: {
+		container: {
+			center: true,
+			padding: "2rem",
+			screens: {
+				"2xl": "1400px",
+			},
+		},
 		extend: {
+			fontFamily: {
+				sans: [
+					"Roboto",
+					"system-ui",
+					"-apple-system",
+					"BlinkMacSystemFont",
+					"Segoe UI",
+					"Oxygen",
+					"Ubuntu",
+					"Cantarell",
+					"Open Sans",
+					"Helvetica Neue",
+					"sans-serif",
+				],
+				mono: [
+					"Roboto Mono",
+					"ui-monospace",
+					"SFMono-Regular",
+					"Menlo",
+					"Monaco",
+					"Consolas",
+					"Liberation Mono",
+					"Courier New",
+					"monospace",
+				],
+			},
 			colors: {
-				// Primary - Blue (Brand color, main actions)
+				border: "hsl(var(--border))",
+				input: "hsl(var(--input))",
+				ring: "hsl(var(--ring))",
+				background: "hsl(var(--background))",
+				foreground: "hsl(var(--foreground))",
 				primary: {
+					DEFAULT: "hsl(var(--primary))",
+					foreground: "hsl(var(--primary-foreground))",
 					50: "#f0f9ff",
 					100: "#e0f2fe",
 					200: "#bae6fd",
@@ -18,6 +57,30 @@ export default {
 					800: "#075985",
 					900: "#0c4a6e",
 					950: "#082f49",
+				},
+				secondary: {
+					DEFAULT: "hsl(var(--secondary))",
+					foreground: "hsl(var(--secondary-foreground))",
+				},
+				destructive: {
+					DEFAULT: "hsl(var(--destructive))",
+					foreground: "hsl(var(--destructive-foreground))",
+				},
+				muted: {
+					DEFAULT: "hsl(var(--muted))",
+					foreground: "hsl(var(--muted-foreground))",
+				},
+				accent: {
+					DEFAULT: "hsl(var(--accent))",
+					foreground: "hsl(var(--accent-foreground))",
+				},
+				popover: {
+					DEFAULT: "hsl(var(--popover))",
+					foreground: "hsl(var(--popover-foreground))",
+				},
+				card: {
+					DEFAULT: "hsl(var(--card))",
+					foreground: "hsl(var(--card-foreground))",
 				},
 				// Success - Green (Positive actions, success states)
 				success: {
@@ -76,34 +139,42 @@ export default {
 					950: "#020617",
 				},
 			},
-			// Background colors for light/dark mode
-			backgroundColor: {
-				light: {
-					primary: "var(--color-neutral-50)",
-					secondary: "var(--color-neutral-100)",
-					tertiary: "var(--color-neutral-200)",
+			borderRadius: {
+				lg: "var(--radius)",
+				md: "calc(var(--radius) - 2px)",
+				sm: "calc(var(--radius) - 4px)",
+			},
+			// Animation variants for Framer Motion
+			variants: {
+				slideIn: {
+					initial: { opacity: 0, x: -20 },
+					animate: { opacity: 1, x: 0 },
+					exit: { opacity: 0, x: 20 },
 				},
-				dark: {
-					primary: "var(--color-neutral-900)",
-					secondary: "var(--color-neutral-800)",
-					tertiary: "var(--color-neutral-700)",
+				fadeIn: {
+					initial: { opacity: 0 },
+					animate: { opacity: 1 },
+					exit: { opacity: 0 },
+				},
+				scaleIn: {
+					initial: { opacity: 0, scale: 0.9 },
+					animate: { opacity: 1, scale: 1 },
+					exit: { opacity: 0, scale: 0.9 },
+				},
+				slideUp: {
+					initial: { opacity: 0, y: 20 },
+					animate: { opacity: 1, y: 0 },
+					exit: { opacity: 0, y: -20 },
 				},
 			},
-			keyframes: {
-				"accordion-down": {
-					from: { height: 0 },
-					to: { height: "var(--radix-accordion-content-height)" },
-				},
-				"accordion-up": {
-					from: { height: "var(--radix-accordion-content-height)" },
-					to: { height: 0 },
-				},
-			},
-			animation: {
-				"accordion-down": "accordion-down 0.2s ease-out",
-				"accordion-up": "accordion-up 0.2s ease-out",
+			// Transition presets for Framer Motion
+			transitions: {
+				default: { duration: 0.3, ease: "easeInOut" },
+				smooth: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+				spring: { type: "spring", damping: 15, stiffness: 150 },
+				bounce: { type: "spring", damping: 10, stiffness: 100 },
 			},
 		},
 	},
-	plugins: [],
+	plugins: [require("tailwindcss-animate")],
 };

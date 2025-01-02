@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
-import { categoriesApi, productsApi } from "../../services/api";
+import { categoriesApi, productsApi } from "../../services";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
+import { CategoryModal } from "./CategoryModal";
 
 interface Category {
 	id: string;
@@ -36,8 +37,8 @@ const CategoryDetails: React.FC<CategoryDetailsProps> = ({
 	useEffect(() => {
 		const fetchProducts = async () => {
 			try {
-				const response = await productsApi.getAll();
-				const categoryProducts = response.data.filter(
+				const { data } = await productsApi.getAll();
+				const categoryProducts = data.filter(
 					(product: Product) => product.category === category.id
 				);
 				setProducts(categoryProducts);
@@ -121,20 +122,22 @@ export const Categories: React.FC = () => {
 	const [selectedCategory, setSelectedCategory] = useState<Category | null>(
 		null
 	);
+	const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
+	const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+
+	const fetchCategories = async () => {
+		try {
+			const { data } = await categoriesApi.getAll();
+			setCategories(data);
+			setIsLoading(false);
+		} catch (error) {
+			console.error("Error fetching categories:", error);
+			toast.error("Failed to load categories");
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const fetchCategories = async () => {
-			try {
-				const response = await categoriesApi.getAll();
-				setCategories(response.data);
-				setIsLoading(false);
-			} catch (error) {
-				console.error("Error fetching categories:", error);
-				toast.error("Failed to load categories");
-				setIsLoading(false);
-			}
-		};
-
 		fetchCategories();
 	}, []);
 
@@ -149,7 +152,10 @@ export const Categories: React.FC = () => {
 						Manage your product categories
 					</p>
 				</div>
-				<Button className="gap-2">
+				<Button
+					className="gap-2"
+					onClick={() => setIsNewCategoryModalOpen(true)}
+				>
 					<Plus className="h-4 w-4" />
 					Add Category
 				</Button>
@@ -220,6 +226,25 @@ export const Categories: React.FC = () => {
 					</div>
 				</div>
 			)}
+
+			<CategoryModal
+				isOpen={isNewCategoryModalOpen}
+				onClose={() => setIsNewCategoryModalOpen(false)}
+				onSuccess={() => {
+					fetchCategories();
+					setIsNewCategoryModalOpen(false);
+				}}
+			/>
+
+			<CategoryModal
+				isOpen={!!editingCategory}
+				onClose={() => setEditingCategory(null)}
+				onSuccess={() => {
+					fetchCategories();
+					setEditingCategory(null);
+				}}
+				category={editingCategory || undefined}
+			/>
 
 			<Modal
 				isOpen={!!selectedCategory}

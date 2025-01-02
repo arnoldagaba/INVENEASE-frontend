@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search as SearchIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { productsApi, categoriesApi } from "../../services/api";
+import { productsApi, categoriesApi } from "../../services";
 import { useDebounce } from "../../hooks/useDebounce";
 
 interface SearchResult {
@@ -45,13 +45,10 @@ export const Search: React.FC = () => {
 
 			setIsLoading(true);
 			try {
-				const [productsResponse, categoriesResponse] = await Promise.all([
+				const [{ data: products }, { data: categories }] = await Promise.all([
 					productsApi.getAll(),
 					categoriesApi.getAll(),
 				]);
-
-				const products = productsResponse.data;
-				const categories = categoriesResponse.data;
 
 				const productResults = products
 					.filter((product: any) =>

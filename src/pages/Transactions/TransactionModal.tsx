@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
-import { productsApi, transactionsApi } from "../../services/api";
+import { productsApi, transactionsApi } from "../../services";
 import { toast } from "react-toastify";
-
-interface Product {
-	id: string;
-	name: string;
-	sku: string;
-	price: number;
-	quantity: number;
-}
+import { formatCurrency } from "../../utils/format";
 
 interface TransactionModalProps {
 	isOpen: boolean;
@@ -24,9 +17,17 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 	onSuccess,
 }) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const [products, setProducts] = useState<Product[]>([]);
+	const [products, setProducts] = useState<
+		Array<{
+			id: string;
+			name: string;
+			sku: string;
+			price: number;
+			quantity: number;
+		}>
+	>([]);
 	const [formData, setFormData] = useState({
-		type: "stock-in",
+		type: "stock-in" as "stock-in" | "stock-out",
 		productId: "",
 		quantity: 1,
 		price: 0,
@@ -35,8 +36,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 	useEffect(() => {
 		const fetchProducts = async () => {
 			try {
-				const response = await productsApi.getAll();
-				setProducts(response.data);
+				const { data } = await productsApi.getAll();
+				setProducts(data);
 			} catch (error) {
 				console.error("Error fetching products:", error);
 				toast.error("Failed to load products");
@@ -74,8 +75,20 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
-			[name]: name === "quantity" || name === "price" ? Number(value) : value,
+			[name]: ["quantity", "price"].includes(name) ? Number(value) : value,
 		}));
+
+		// Auto-fill price when product is selected
+		if (name === "productId") {
+			const selectedProduct = products.find((p) => p.id === value);
+			if (selectedProduct) {
+				setFormData((prev) => ({
+					...prev,
+					productId: value,
+					price: selectedProduct.price,
+				}));
+			}
+		}
 	};
 
 	const selectedProduct = products.find(
@@ -116,6 +129,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 						name="productId"
 						value={formData.productId}
 						onChange={handleChange}
+						required
 						className="mt-1 block w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
 					>
 						<option value="">Select a product</option>
@@ -125,6 +139,11 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 							</option>
 						))}
 					</select>
+					{selectedProduct && (
+						<p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+							Current stock: {selectedProduct.quantity} units
+						</p>
+					)}
 				</div>
 
 				<div>
@@ -141,13 +160,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 						min="1"
 						value={formData.quantity}
 						onChange={handleChange}
+						required
 						className="mt-1 block w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
 					/>
-					{selectedProduct && (
-						<p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-							Current stock: {selectedProduct.quantity} units
-						</p>
-					)}
 				</div>
 
 				<div>
@@ -169,12 +184,13 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 							step="0.01"
 							value={formData.price}
 							onChange={handleChange}
+							required
 							className="pl-7 block w-full rounded-md border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 shadow-sm focus:border-primary-500 focus:ring-primary-500"
 						/>
 					</div>
 					{selectedProduct && (
 						<p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-							Current price: ${selectedProduct.price.toFixed(2)}
+							Current price: {formatCurrency(selectedProduct.price)}
 						</p>
 					)}
 				</div>

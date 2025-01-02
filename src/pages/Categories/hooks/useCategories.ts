@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { categoriesApi } from "../../../services/api";
+import { categoriesApi } from "../../../services";
 
 interface Category {
 	id: string;

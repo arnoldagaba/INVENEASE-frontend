@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Plus, Edit } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
-import { productsApi } from "../../services/api";
+import { productsApi } from "../../services";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import { formatCurrency } from "../../utils/format";
+import { ProductModal } from "./ProductModal";
 
 interface Product {
 	id: string;
@@ -117,20 +118,22 @@ export const Products: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [products, setProducts] = useState<Product[]>([]);
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+	const [isNewProductModalOpen, setIsNewProductModalOpen] = useState(false);
+	const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+	const fetchProducts = async () => {
+		try {
+			const { data } = await productsApi.getAll();
+			setProducts(data);
+			setIsLoading(false);
+		} catch (error) {
+			console.error("Error fetching products:", error);
+			toast.error("Failed to load products");
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
-		const fetchProducts = async () => {
-			try {
-				const response = await productsApi.getAll();
-				setProducts(response.data);
-				setIsLoading(false);
-			} catch (error) {
-				console.error("Error fetching products:", error);
-				toast.error("Failed to load products");
-				setIsLoading(false);
-			}
-		};
-
 		fetchProducts();
 	}, []);
 
@@ -145,7 +148,10 @@ export const Products: React.FC = () => {
 						Manage your inventory products
 					</p>
 				</div>
-				<Button className="gap-2">
+				<Button
+					className="gap-2"
+					onClick={() => setIsNewProductModalOpen(true)}
+				>
 					<Plus className="h-4 w-4" />
 					Add Product
 				</Button>
@@ -231,6 +237,25 @@ export const Products: React.FC = () => {
 					</div>
 				</div>
 			)}
+
+			<ProductModal
+				isOpen={isNewProductModalOpen}
+				onClose={() => setIsNewProductModalOpen(false)}
+				onSuccess={() => {
+					fetchProducts();
+					setIsNewProductModalOpen(false);
+				}}
+			/>
+
+			<ProductModal
+				isOpen={!!editingProduct}
+				onClose={() => setEditingProduct(null)}
+				onSuccess={() => {
+					fetchProducts();
+					setEditingProduct(null);
+				}}
+				product={editingProduct || undefined}
+			/>
 
 			<Modal
 				isOpen={!!selectedProduct}

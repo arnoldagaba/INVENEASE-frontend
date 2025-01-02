@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { api } from "../../services/api";
+import { api } from "../../services";
 import { Button } from "../../components/ui/Button";
 import { format } from "date-fns";
 
@@ -24,54 +24,19 @@ export const Orders: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		const fetchOrders = async () => {
+			try {
+				const { data } = await api.get("/orders");
+				setOrders(data);
+			} catch (error) {
+				toast.error("Failed to fetch orders");
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
 		fetchOrders();
 	}, []);
-
-	const fetchOrders = async () => {
-		try {
-			// Simulated API call with mock data
-			const mockOrders: Order[] = [
-				{
-					id: "1",
-					orderNumber: "ORD-2024-001",
-					customerName: "John Doe",
-					status: "completed",
-					total: 1299.99,
-					items: [
-						{
-							productId: "1",
-							name: "Laptop Pro X",
-							quantity: 1,
-							price: 1299.99,
-						},
-					],
-					createdAt: new Date().toISOString(),
-				},
-				{
-					id: "2",
-					orderNumber: "ORD-2024-002",
-					customerName: "Jane Smith",
-					status: "processing",
-					total: 59.98,
-					items: [
-						{
-							productId: "2",
-							name: "Wireless Mouse",
-							quantity: 2,
-							price: 29.99,
-						},
-					],
-					createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-				},
-			];
-
-			setOrders(mockOrders);
-		} catch (error) {
-			toast.error("Failed to fetch orders");
-		} finally {
-			setIsLoading(false);
-		}
-	};
 
 	const getStatusColor = (status: Order["status"]) => {
 		switch (status) {
@@ -104,6 +69,12 @@ export const Orders: React.FC = () => {
 			{isLoading ? (
 				<div className="flex justify-center">
 					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+				</div>
+			) : orders.length === 0 ? (
+				<div className="text-center py-12">
+					<p className="text-neutral-500 dark:text-neutral-400">
+						No orders found
+					</p>
 				</div>
 			) : (
 				<div className="bg-white dark:bg-neutral-800 shadow-sm rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-700">
