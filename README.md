@@ -1,59 +1,81 @@
-# InvenEase - Inventory Management System
+# InvenEase - Modern Inventory Management System
 
 InvenEase is a modern, user-friendly inventory management system built with React and TypeScript. It helps businesses track their inventory, manage stock levels, and monitor product movements efficiently.
 
 ## 🚀 Features
 
-- **User Authentication**
-  - Secure login and registration
-  - Password reset functionality
+- **User Authentication & Authorization**
+  - Secure JWT-based authentication
   - Role-based access control (Admin/Staff)
+  - Persistent login with refresh tokens
+  - Secure password reset flow
 
 - **Inventory Management**
   - Product tracking with SKU
-  - Stock level monitoring
-  - Low stock alerts
+  - Real-time stock level monitoring
+  - Low stock alerts and notifications
   - Category management
+  - Batch operations support
+  - Image upload and management
 
-- **Dashboard**
+- **Modern Dashboard**
   - Real-time inventory statistics
+  - Interactive charts and graphs
   - Recent transactions view
   - Low stock notifications
   - Stock value tracking
+  - Customizable widgets
 
-- **Modern UI/UX**
-  - Responsive design
-  - Dark/Light theme support
-  - Clean and intuitive interface
-  - Toast notifications
+- **Advanced UI/UX**
+  - Responsive design with mobile-first approach
+  - Dark/Light theme with system preference sync
+  - Smooth animations with Framer Motion
+  - Toast notifications for user feedback
+  - Intuitive navigation with sidebar
+  - Global search functionality
+  - Accessible components (ARIA compliant)
 
 ## 🛠️ Tech Stack
 
-- React 18
-- TypeScript
-- Vite
-- TailwindCSS
-- Zustand (State Management)
-- React Router v6
-- Axios
-- React Toastify
-- HeadlessUI
-- Lucide React (Icons)
-- Date-fns
+- **Core**
+  - React 18 with TypeScript
+  - Vite for fast development
+  - React Router v6 for routing
+
+- **Styling & UI**
+  - TailwindCSS for styling
+  - Framer Motion for animations
+  - Lucide React for icons
+  - Custom UI components
+  - Responsive design system
+
+- **State Management & Data Handling**
+  - Zustand for state management
+  - React Query for server state
+  - Axios for API requests
+  - Form handling with React Hook Form
+  - Zod for schema validation
+
+- **Developer Experience**
+  - ESLint for code linting
+  - Prettier for code formatting
+  - Husky for git hooks
+  - TypeScript for type safety
 
 ## 📋 Prerequisites
 
-Before you begin, ensure you have the following installed:
+Before you begin, ensure you have:
 - Node.js (v16 or higher)
 - npm or yarn
 - Git
+- A modern web browser
 
 ## 🚀 Getting Started
 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/yourusername/invenease.git
-   cd invenease
+   cd invenease/frontend
    ```
 
 2. **Install dependencies**
@@ -67,12 +89,25 @@ Before you begin, ensure you have the following installed:
    ```bash
    cp .env.example .env
    ```
-   Update the `.env` file with your configuration:
-   ```
-   VITE_API_URL=your_api_url
+   Configure the following in your `.env`:
+   ```env
+   # API Configuration
+   VITE_API_URL=http://localhost:8000/api
+   VITE_API_TIMEOUT=30000
+
+   # Authentication
+   VITE_JWT_SECRET=your_jwt_secret_here
+   VITE_JWT_EXPIRY=7d
+
+   # Feature Flags
+   VITE_ENABLE_ANALYTICS=true
+   VITE_ENABLE_NOTIFICATIONS=true
+
+   # Theme Configuration
+   VITE_DEFAULT_THEME=light
    ```
 
-4. **Start the development server**
+4. **Start development server**
    ```bash
    npm run dev
    # or
@@ -86,58 +121,55 @@ Before you begin, ensure you have the following installed:
    yarn build
    ```
 
-## 🤝 Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature-name`
-3. Make your changes
-4. Run tests and linting: `npm run lint`
-5. Commit your changes: `git commit -m 'Add some feature'`
-6. Push to the branch: `git push origin feature/your-feature-name`
-7. Submit a pull request
-
-### Code Style Guidelines
-
-- Use TypeScript for all new files
-- Follow the existing project structure
-- Use functional components with hooks
-- Write meaningful commit messages
-- Add appropriate comments for complex logic
-- Update documentation for significant changes
-
-## 📁 Project Structure
+## 🤝 Project Structure
 
 ```
-src/
-├── components/     # Reusable UI components
-│   ├── Layout/     # Layout components
-│   └── ui/         # Basic UI components
-├── hooks/          # Custom React hooks
-├── pages/          # Page components
-├── services/       # API services
-├── store/          # State management
-├── types/          # TypeScript types
-└── utils/          # Utility functions
+frontend/
+├── src/
+│   ├── components/     # Reusable components
+│   │   ├── ui/         # Basic UI components
+│   │   └── layout/     # Layout components
+│   ├── hooks/          # Custom React hooks
+│   ├── pages/          # Page components
+│   ├── services/       # API services
+│   ├── store/          # State management
+│   ├── styles/         # Global styles
+│   ├── types/          # TypeScript types
+│   └── utils/          # Utility functions
+├── public/            # Static assets
+└── tests/            # Test files
 ```
 
-## 🔒 Authentication
+## 🎨 Theme System
 
-The application uses JWT-based authentication. Available endpoints:
+The application uses a comprehensive theme system:
+- Light/Dark mode with system preference detection
+- CSS variables for dynamic theming
+- TailwindCSS for consistent styling
+- Framer Motion for smooth transitions
+- Customizable color schemes
 
-- `POST /auth/login` - User login
-- `POST /auth/signup` - User registration
-- `POST /auth/request-reset` - Request password reset
-- `POST /auth/reset-password` - Reset password
-- `POST /auth/update-password` - Update password
-- `GET /auth/me` - Get current user
+## 🔒 Security Features
 
-## 🎨 Theme Customization
+- JWT-based authentication
+- HTTP-only cookies
+- CSRF protection
+- Input sanitization
+- Rate limiting
+- Secure password handling
 
-The application supports both light and dark themes. Theme configuration can be found in:
-- `src/hooks/useTheme.ts`
-- TailwindCSS configuration
+## 🧪 Testing
+
+```bash
+# Run unit tests
+npm run test
+
+# Run e2e tests
+npm run test:e2e
+
+# Run with coverage
+npm run test:coverage
+```
 
 ## 📝 License
 
@@ -145,14 +177,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Support
 
-For support, email support@invenease.com or create an issue in the repository.
+For support:
+- Create an issue in the repository
+- Email: support@invenease.com
+- Documentation: [docs.invenease.com](https://docs.invenease.com)
 
 ## 🙏 Acknowledgments
 
 - [Tailwind CSS](https://tailwindcss.com/)
-- [HeadlessUI](https://headlessui.dev/)
+- [Framer Motion](https://www.framer.com/motion/)
 - [Lucide Icons](https://lucide.dev/)
-- [React Toastify](https://fkhadra.github.io/react-toastify/)
+- [shadcn/ui](https://ui.shadcn.com/)
 
 ---
 

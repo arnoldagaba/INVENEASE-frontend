@@ -13,7 +13,7 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: [
-					"Roboto",
+					"Outfit",
 					"system-ui",
 					"-apple-system",
 					"BlinkMacSystemFont",
@@ -26,7 +26,7 @@ export default {
 					"sans-serif",
 				],
 				mono: [
-					"Roboto Mono",
+					"Outfit",
 					"ui-monospace",
 					"SFMono-Regular",
 					"Menlo",
@@ -36,6 +36,21 @@ export default {
 					"Courier New",
 					"monospace",
 				],
+			},
+			fontSize: {
+				xs: ["0.75rem", { lineHeight: "1rem" }],
+				sm: ["0.875rem", { lineHeight: "1.25rem" }],
+				base: ["1rem", { lineHeight: "1.5rem" }],
+				lg: ["1.125rem", { lineHeight: "1.75rem" }],
+				xl: ["1.25rem", { lineHeight: "1.75rem" }],
+				"2xl": ["1.5rem", { lineHeight: "2rem" }],
+				"3xl": ["1.875rem", { lineHeight: "2.25rem" }],
+				"4xl": ["2.25rem", { lineHeight: "2.5rem" }],
+				"5xl": ["3rem", { lineHeight: "1" }],
+				"6xl": ["3.75rem", { lineHeight: "1" }],
+				"7xl": ["4.5rem", { lineHeight: "1" }],
+				"8xl": ["6rem", { lineHeight: "1" }],
+				"9xl": ["8rem", { lineHeight: "1" }],
 			},
 			colors: {
 				border: "hsl(var(--border))",
@@ -82,7 +97,6 @@ export default {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
-				// Success - Green (Positive actions, success states)
 				success: {
 					50: "#f0fdf4",
 					100: "#dcfce7",
@@ -96,7 +110,6 @@ export default {
 					900: "#14532d",
 					950: "#052e16",
 				},
-				// Warning - Amber (Alerts, warnings)
 				warning: {
 					50: "#fffbeb",
 					100: "#fef3c7",
@@ -110,7 +123,6 @@ export default {
 					900: "#78350f",
 					950: "#451a03",
 				},
-				// Error - Red (Destructive actions, errors)
 				error: {
 					50: "#fef2f2",
 					100: "#fee2e2",
@@ -124,7 +136,6 @@ export default {
 					900: "#7f1d1d",
 					950: "#450a0a",
 				},
-				// Neutral - Slate (Text, backgrounds, borders)
 				neutral: {
 					50: "#f8fafc",
 					100: "#f1f5f9",
@@ -144,7 +155,6 @@ export default {
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
 			},
-			// Animation variants for Framer Motion
 			variants: {
 				slideIn: {
 					initial: { opacity: 0, x: -20 },
@@ -167,7 +177,6 @@ export default {
 					exit: { opacity: 0, y: -20 },
 				},
 			},
-			// Transition presets for Framer Motion
 			transitions: {
 				default: { duration: 0.3, ease: "easeInOut" },
 				smooth: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
