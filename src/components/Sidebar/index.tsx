@@ -9,7 +9,6 @@ import {
 	FileText,
 	Settings,
 	ChevronLeft,
-	ChevronRight,
 	X,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
@@ -47,12 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 	}, [location, onClose]);
 
 	return (
-		<motion.div
-			initial={false}
-			animate={{ width: isMinimized ? "4rem" : "16rem" }}
-			transition={{ duration: 0.3, type: "spring", bounce: 0 }}
-			className="h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800"
-		>
+		<div className="h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800">
 			<div className="flex items-center justify-between h-16 px-4 border-b border-neutral-200 dark:border-neutral-800">
 				<AnimatePresence mode="wait">
 					{!isMinimized && (
@@ -109,12 +103,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 								isActive
 									? "bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400"
 									: "text-neutral-700 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-800/50",
-								isMinimized && "justify-center"
+								isMinimized ? "justify-center" : "justify-start"
 							)
 						}
 						title={item.name}
 					>
-						<item.icon className="h-5 w-5 flex-shrink-0" />
+						<item.icon
+							className={cn(
+								"flex-shrink-0",
+								isMinimized ? "h-6 w-6" : "h-5 w-5"
+							)}
+						/>
 						<AnimatePresence mode="wait">
 							{!isMinimized && (
 								<motion.span
@@ -131,6 +130,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 					</NavLink>
 				))}
 			</nav>
-		</motion.div>
+		</div>
 	);
 };

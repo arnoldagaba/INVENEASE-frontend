@@ -29,15 +29,17 @@ export const Dashboard: React.FC = () => {
 	useEffect(() => {
 		const fetchDashboardData = async () => {
 			try {
-				const [
-					{ data: products },
-					{ data: categories },
-					{ data: transactions },
-				] = await Promise.all([
-					productsApi.getAll(),
-					categoriesApi.getAll(),
-					transactionsApi.getAll(),
-				]);
+				const [productsRes, categoriesRes, transactionsRes] = await Promise.all(
+					[
+						productsApi.getAll(),
+						categoriesApi.getAll(),
+						transactionsApi.getAll(),
+					]
+				);
+
+				const products = productsRes.data.products || [];
+				const categories = categoriesRes.data.categories || [];
+				const transactions = transactionsRes.data.transactions || [];
 
 				const lowStockCount = products.filter(
 					(product: any) => product.quantity <= product.lowStockThreshold

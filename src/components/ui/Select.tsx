@@ -1,24 +1,15 @@
-import { cn } from "../../lib/utils";
-import { forwardRef, SelectHTMLAttributes } from "react";
+import React from "react";
 
-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 	className?: string;
-	error?: boolean;
 }
 
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-	({ className, children, error, ...props }, ref) => {
+const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+	({ className = "", children, ...props }, ref) => {
 		return (
 			<select
-				className={cn(
-					"block w-full rounded-md border border-gray-300 bg-white px-3 py-2",
-					"focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary",
-					"dark:border-gray-600 dark:bg-gray-700 dark:text-white",
-					"disabled:cursor-not-allowed disabled:opacity-50",
-					error && "border-red-500 focus:border-red-500 focus:ring-red-500",
-					className
-				)}
 				ref={ref}
+				className={`block w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 dark:focus:ring-neutral-300 ${className}`}
 				{...props}
 			>
 				{children}
@@ -28,3 +19,5 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 );
 
 Select.displayName = "Select";
+
+export { Select };

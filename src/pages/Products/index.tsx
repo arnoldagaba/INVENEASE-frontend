@@ -9,6 +9,7 @@ import { formatCurrency } from "../../utils/format";
 import { ProductModal } from "./ProductModal";
 
 interface Product {
+	_id?: string;
 	id: string;
 	name: string;
 	description: string;
@@ -114,6 +115,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 	);
 };
 
+interface ApiResponse<T> {
+	products: T[];
+	pagination: {
+		page: number;
+		limit: number;
+		total: number;
+		pages: number;
+	};
+}
+
 export const Products: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [products, setProducts] = useState<Product[]>([]);
@@ -123,8 +134,12 @@ export const Products: React.FC = () => {
 
 	const fetchProducts = async () => {
 		try {
-			const { data } = await productsApi.getAll();
-			setProducts(data);
+			const response = await productsApi.getAll();
+			console.log("API Response:", response.data);
+			const { products: fetchedProducts } =
+				response.data as ApiResponse<Product>;
+			console.log("Fetched Products:", fetchedProducts);
+			setProducts(fetchedProducts || []);
 			setIsLoading(false);
 		} catch (error) {
 			console.error("Error fetching products:", error);
@@ -190,7 +205,7 @@ export const Products: React.FC = () => {
 							<tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
 								{products.map((product) => (
 									<tr
-										key={product.id}
+										key={product._id || product.id}
 										className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors cursor-pointer"
 										onClick={() => setSelectedProduct(product)}
 									>
@@ -225,7 +240,15 @@ export const Products: React.FC = () => {
 											</span>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-											<Button variant="ghost" size="sm" className="gap-2">
+											<Button
+												variant="ghost"
+												size="sm"
+												className="gap-2"
+												onClick={(e) => {
+													e.stopPropagation();
+													setEditingProduct(product);
+												}}
+											>
 												<Edit className="h-4 w-4" />
 												Edit
 											</Button>

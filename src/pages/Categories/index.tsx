@@ -4,7 +4,7 @@ import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
 import { categoriesApi, productsApi } from "../../services";
 import { toast } from "react-toastify";
-import { format } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { CategoryModal } from "./CategoryModal";
 
 interface Category {
@@ -26,6 +26,42 @@ interface CategoryDetailsProps {
 	category: Category;
 	onClose: () => void;
 }
+
+interface ApiResponse<T> {
+	categories: T[];
+	pagination: {
+		page: number;
+		limit: number;
+		total: number;
+		pages: number;
+	};
+}
+
+const formatDate = (dateString: string): string => {
+	try {
+		if (!dateString) {
+			console.warn("Empty date string received:", dateString);
+			return "N/A";
+		}
+
+		// Try to parse ISO string
+		const date = parseISO(dateString);
+		if (!isValid(date)) {
+			// Try to parse MongoDB date string (which might include milliseconds)
+			const mongoDate = new Date(dateString);
+			if (!isValid(mongoDate)) {
+				console.warn("Invalid date:", dateString);
+				return "N/A";
+			}
+			return format(mongoDate, "MMM d, yyyy");
+		}
+
+		return format(date, "MMM d, yyyy");
+	} catch (error) {
+		console.error("Error formatting date:", error, "Date string:", dateString);
+		return "N/A";
+	}
+};
 
 const CategoryDetails: React.FC<CategoryDetailsProps> = ({
 	category,
@@ -127,8 +163,12 @@ export const Categories: React.FC = () => {
 
 	const fetchCategories = async () => {
 		try {
-			const { data } = await categoriesApi.getAll();
-			setCategories(data);
+			const response = await categoriesApi.getAll();
+			console.log("API Response:", response.data);
+			const { categories: fetchedCategories } =
+				response.data as ApiResponse<Category>;
+			console.log("Fetched Categories:", fetchedCategories);
+			setCategories(fetchedCategories);
 			setIsLoading(false);
 		} catch (error) {
 			console.error("Error fetching categories:", error);
@@ -211,10 +251,18 @@ export const Categories: React.FC = () => {
 											</span>
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-											{format(new Date(category.createdAt), "MMM d, yyyy")}
+											{formatDate(category.createdAt)}
 										</td>
 										<td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-											<Button variant="ghost" size="sm" className="gap-2">
+											<Button
+												variant="ghost"
+												size="sm"
+												className="gap-2"
+												onClick={(e) => {
+													e.stopPropagation();
+													setEditingCategory(category);
+												}}
+											>
 												<Edit className="h-4 w-4" />
 												Edit
 											</Button>

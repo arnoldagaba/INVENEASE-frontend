@@ -9,6 +9,7 @@ import { formatCurrency } from "../../utils/format";
 import { TransactionModal } from "./TransactionModal";
 
 interface Transaction {
+	_id?: string;
 	id: string;
 	type: "stock-in" | "stock-out";
 	productId: {
@@ -109,6 +110,16 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
 	);
 };
 
+interface ApiResponse<T> {
+	transactions: T[];
+	pagination: {
+		page: number;
+		limit: number;
+		total: number;
+		pages: number;
+	};
+}
+
 export const Transactions: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -119,8 +130,12 @@ export const Transactions: React.FC = () => {
 
 	const fetchTransactions = async () => {
 		try {
-			const { data } = await transactionsApi.getAll();
-			setTransactions(data);
+			const response = await transactionsApi.getAll();
+			console.log("API Response:", response.data);
+			const { transactions: fetchedTransactions } =
+				response.data as ApiResponse<Transaction>;
+			console.log("Fetched Transactions:", fetchedTransactions);
+			setTransactions(fetchedTransactions || []);
 			setIsLoading(false);
 		} catch (error) {
 			console.error("Error fetching transactions:", error);
@@ -186,7 +201,7 @@ export const Transactions: React.FC = () => {
 							<tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
 								{transactions.map((transaction) => (
 									<tr
-										key={transaction.id}
+										key={transaction._id || transaction.id}
 										className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors cursor-pointer"
 										onClick={() => setSelectedTransaction(transaction)}
 									>

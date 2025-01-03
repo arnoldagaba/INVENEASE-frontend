@@ -28,7 +28,7 @@ import { Inventory } from "./pages/Inventory";
 import { Orders } from "./pages/Orders";
 import { Transactions } from "./pages/Transactions";
 import Analytics from "./pages/Analytics";
-import Reports from "./pages/Reports";
+import Reports from "./pages/Reports/index";
 import { Settings } from "./pages/Settings";
 
 // Auth Guard Component

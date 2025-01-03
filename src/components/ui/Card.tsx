@@ -1,78 +1,124 @@
-import { cn } from "../../lib/utils";
-import { ReactNode } from "react";
+import React from "react";
 
 interface CardProps {
-	children: ReactNode;
+	children: React.ReactNode;
 	className?: string;
 }
 
-export function Card({ children, className }: CardProps) {
-	return (
-		<div
-			className={cn(
-				"rounded-lg border bg-card text-card-foreground shadow-sm",
-				"dark:bg-gray-800 dark:border-gray-700",
-				className
-			)}
-		>
-			{children}
-		</div>
-	);
+interface CardHeaderProps {
+	children: React.ReactNode;
+	className?: string;
 }
 
-Card.Header = function CardHeader({ children, className }: CardProps) {
-	return (
-		<div
-			className={cn(
-				"flex flex-col space-y-1.5 p-6",
-				"dark:text-gray-100",
-				className
-			)}
-		>
-			{children}
-		</div>
-	);
+interface CardTitleProps {
+	children: React.ReactNode;
+	className?: string;
+}
+
+interface CardDescriptionProps {
+	children: React.ReactNode;
+	className?: string;
+}
+
+interface CardContentProps {
+	children: React.ReactNode;
+	className?: string;
+}
+
+type CardComponent = React.ForwardRefExoticComponent<
+	CardProps & React.RefAttributes<HTMLDivElement>
+> & {
+	Header: React.ForwardRefExoticComponent<
+		CardHeaderProps & React.RefAttributes<HTMLDivElement>
+	>;
+	Title: React.ForwardRefExoticComponent<
+		CardTitleProps & React.RefAttributes<HTMLParagraphElement>
+	>;
+	Description: React.ForwardRefExoticComponent<
+		CardDescriptionProps & React.RefAttributes<HTMLParagraphElement>
+	>;
+	Content: React.ForwardRefExoticComponent<
+		CardContentProps & React.RefAttributes<HTMLDivElement>
+	>;
 };
 
-Card.Title = function CardTitle({ children, className }: CardProps) {
-	return (
-		<h3
-			className={cn(
-				"text-2xl font-semibold leading-none tracking-tight",
-				"dark:text-gray-100",
-				className
-			)}
-		>
-			{children}
-		</h3>
-	);
-};
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+	({ className = "", children, ...props }, ref) => {
+		return (
+			<div
+				ref={ref}
+				className={`bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 shadow-sm ${className}`}
+				{...props}
+			>
+				{children}
+			</div>
+		);
+	}
+) as CardComponent;
 
-Card.Description = function CardDescription({
-	children,
-	className,
-}: CardProps) {
+const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
+	({ className = "", children, ...props }, ref) => {
+		return (
+			<div
+				ref={ref}
+				className={`flex flex-col space-y-1.5 p-6 ${className}`}
+				{...props}
+			>
+				{children}
+			</div>
+		);
+	}
+);
+
+const CardTitle = React.forwardRef<HTMLParagraphElement, CardTitleProps>(
+	({ className = "", children, ...props }, ref) => {
+		return (
+			<h3
+				ref={ref}
+				className={`text-lg font-semibold leading-none tracking-tight ${className}`}
+				{...props}
+			>
+				{children}
+			</h3>
+		);
+	}
+);
+
+const CardDescription = React.forwardRef<
+	HTMLParagraphElement,
+	CardDescriptionProps
+>(({ className = "", children, ...props }, ref) => {
 	return (
 		<p
-			className={cn(
-				"text-sm text-muted-foreground",
-				"dark:text-gray-400",
-				className
-			)}
+			ref={ref}
+			className={`text-sm text-neutral-500 dark:text-neutral-400 ${className}`}
+			{...props}
 		>
 			{children}
 		</p>
 	);
-};
+});
 
-Card.Content = function CardContent({ children, className }: CardProps) {
-	return <div className={cn("p-6 pt-0", className)}>{children}</div>;
-};
+const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
+	({ className = "", children, ...props }, ref) => {
+		return (
+			<div ref={ref} className={`p-6 pt-0 ${className}`} {...props}>
+				{children}
+			</div>
+		);
+	}
+);
 
-Card.Footer = function CardFooter({ children, className }: CardProps) {
-	return (
-		<div className={cn("flex items-center p-6 pt-0", className)}>
-			{children}
-		</div>
-	);
-};
+Card.displayName = "Card";
+CardHeader.displayName = "CardHeader";
+CardTitle.displayName = "CardTitle";
+CardDescription.displayName = "CardDescription";
+CardContent.displayName = "CardContent";
+
+// Attach subcomponents to Card
+Card.Header = CardHeader;
+Card.Title = CardTitle;
+Card.Description = CardDescription;
+Card.Content = CardContent;
+
+export { Card, CardHeader, CardTitle, CardDescription, CardContent };

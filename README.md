@@ -65,6 +65,7 @@ InvenEase is a modern, user-friendly inventory management system built with Reac
 ## 📋 Prerequisites
 
 Before you begin, ensure you have:
+
 - Node.js (v16 or higher)
 - npm or yarn
 - Git
@@ -73,12 +74,14 @@ Before you begin, ensure you have:
 ## 🚀 Getting Started
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/invenease.git
    cd invenease/frontend
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -86,10 +89,13 @@ Before you begin, ensure you have:
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    ```
+
    Configure the following in your `.env`:
+
    ```env
    # API Configuration
    VITE_API_URL=http://localhost:8000/api
@@ -108,6 +114,7 @@ Before you begin, ensure you have:
    ```
 
 4. **Start development server**
+
    ```bash
    npm run dev
    # or
@@ -115,6 +122,7 @@ Before you begin, ensure you have:
    ```
 
 5. **Build for production**
+
    ```bash
    npm run build
    # or
@@ -143,6 +151,7 @@ frontend/
 ## 🎨 Theme System
 
 The application uses a comprehensive theme system:
+
 - Light/Dark mode with system preference detection
 - CSS variables for dynamic theming
 - TailwindCSS for consistent styling
@@ -178,8 +187,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🤝 Support
 
 For support:
+
 - Create an issue in the repository
-- Email: support@invenease.com
+- Email: <support@invenease.com>
 - Documentation: [docs.invenease.com](https://docs.invenease.com)
 
 ## 🙏 Acknowledgments
@@ -191,4 +201,4 @@ For support:
 
 ---
 
-Made with ❤️ by the InvenEase Team 
+Made with ❤️ by the InvenEase Team
